@@ -1,115 +1,108 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_eval/flutter_eval.dart';
-import 'dart:js' as js;
 
-void main() {
-  runApp(const MyApp());
-}
+void main() => runApp(const CounterApp());
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class CounterApp extends StatelessWidget {
+  const CounterApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: Container(
-          width: double.infinity,
-          height: double.infinity,
-          color: Colors.white,
-          child: const RenderFlutterWidget(),
+      title: 'Simple Counter App',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: const CounterScreen(),
+    );
+  }
+}
+
+class CounterScreen extends StatefulWidget {
+  const CounterScreen({super.key});
+
+  @override
+  _CounterScreenState createState() => _CounterScreenState();
+}
+
+class _CounterScreenState extends State<CounterScreen> {
+  int _counter = 0;
+
+  void _incrementCounter() {
+    setState(() {
+      _counter++;
+    });
+  }
+
+  void _decrementCounter() {
+    setState(() {
+      if (_counter > 0) _counter--;
+    });
+  }
+
+  void _resetCounter() {
+    setState(() {
+      _counter = 0;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Counter App'),
+        centerTitle: true,
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              'Current Count:',
+              style: TextStyle(fontSize: 24),
+            ),
+            Text(
+              '$_counter',
+              style: const TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: _incrementCounter,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 10),
+                    textStyle: const TextStyle(fontSize: 20),
+                  ),
+                  child: const Text('+'),
+                ),
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: _decrementCounter,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 10),
+                    textStyle: const TextStyle(fontSize: 20),
+                  ),
+                  child: const Text('-'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _resetCounter,
+              style: ElevatedButton.styleFrom(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                textStyle: const TextStyle(fontSize: 18),
+              ),
+              child: const Text('Reset'),
+            ),
+          ],
         ),
       ),
-    );
-  }
-}
-
-class RenderFlutterWidget extends StatefulWidget {
-  const RenderFlutterWidget({super.key});
-
-  @override
-  State<RenderFlutterWidget> createState() => _RenderFlutterWidgetState();
-}
-
-class _RenderFlutterWidgetState extends State<RenderFlutterWidget> {
-  String renderingWidgetTree = """
-    SizedBox()
-  """;
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  String getFlutterWidgetString() {
-    String flutterWidgetString = '''
-      import 'package:flutter/material.dart';
-
-      class MyApp extends StatelessWidget {
-        const MyApp({super.key});
-
-        @override
-        Widget build(BuildContext context) {
-          return MaterialApp(
-            home: const MyHomePage(),
-            debugShowCheckedModeBanner: false,
-          );
-        }
-      }
-
-      class MyHomePage extends StatefulWidget {
-        const MyHomePage({Key? key}) : super(key: key);
-
-        @override
-        State<MyHomePage> createState() => _MyHomePageState();
-      }
-
-      class _MyHomePageState extends State<MyHomePage> {
-        @override
-        Widget build(BuildContext context) {
-          return Scaffold(
-            body: SizedBox(
-              child:$renderingWidgetTree
-            ),
-          );
-        }
-      }
-    ''';
-    return flutterWidgetString;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return RunFlutterCodeWithString(
-      flutterWidgetString: getFlutterWidgetString(),
-    );
-  }
-}
-
-// ignore: must_be_immutable
-class RunFlutterCodeWithString extends StatelessWidget {
-  String flutterWidgetString = "";
-  RunFlutterCodeWithString({
-    super.key,
-    required this.flutterWidgetString,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return CompilerWidget(
-      packages: {
-        'example': {
-          'main.dart': '''
-            $flutterWidgetString
-           '''
-        }
-      },
-      library: 'package:example/main.dart',
-      function: 'MyApp.',
-      onError: (context, error, stackTrace) {
-        return Text("Error Came $error");
-      },
-      args: [null],
     );
   }
 }
