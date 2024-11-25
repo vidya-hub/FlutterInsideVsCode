@@ -16,7 +16,7 @@ export function activate(context: vscode.ExtensionContext) {
 function createFlutterWebview(context: vscode.ExtensionContext) {
   const panel = vscode.window.createWebviewPanel(
     "flutterWebview",
-    "Open Api Dash",
+    "Open Flutter App",
     vscode.ViewColumn.One,
     {
       enableScripts: true,
